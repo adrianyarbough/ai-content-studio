@@ -1,0 +1,68 @@
+# prod
+dist/
+
+# dev
+.yarn/
+!.yarn/releases
+.vscode/*
+!.vscode/launch.json
+!.vscode/*.code-snippets
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/shelf
+
+# deps
+node_modules/
+.wrangler
+
+# env
+.env
+.env.production
+.dev.vars
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# misc
+.DS_Store
+
+# backups and dumps
+backups/
+*.backup
+*.backup-*
+*BACKUP*
+database-*.sql
+gallery-*.json
+*.dump
+
+# local test artifacts
+test_*.png
+
+# certificates - NEVER COMMIT
+certs/
+*.pem
+*.crt
+*.key
+
+# debug and test files
+debug-*.js
+debug-*.html
+test-*.js
+test-*.html
+*-debug.*
+*-test.*
+
+# development documentation (keep in docs/ folder)
+*_ANALYSIS.md
+*_MODE.md
+*_STRATEGIES.md
+*_TEST.md
+*_FIX*.md
+*_INFO.md
+core.*

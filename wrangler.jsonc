@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "webapp",
+  "compatibility_date": "2025-09-22",
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  // D1 Database for progressive testing system
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "webapp-production",
+      "database_id": "local-development"
+    }
+  ],
+  // R2 Storage for proxying Midjourney images
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "webapp-video-images"
+    }
+  ]
+}

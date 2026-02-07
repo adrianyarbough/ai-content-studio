@@ -1,0 +1,45 @@
+{
+  "name": "webapp",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run dev:sandbox",
+    "dev:vite": "vite",
+    "dev:sandbox": "npm run build && wrangler pages dev dist --d1=webapp-production --local --ip 0.0.0.0 --port 3000",
+    "dev:puppeteer": "node puppeteer-download-service.js",
+    "dev:full": "concurrently \"npm run dev:sandbox\" \"npm run dev:puppeteer\"",
+    "start:express": "node server-full.js",
+    "start:express:full": "concurrently \"npm run start:express\" \"npm run dev:puppeteer\"",
+    "build": "vite build",
+    "preview": "wrangler pages dev",
+    "deploy": "npm run build && wrangler pages deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "db:migrate:local": "wrangler d1 migrations apply webapp-production --local",
+    "db:migrate:prod": "wrangler d1 migrations apply webapp-production",
+    "db:seed": "wrangler d1 execute webapp-production --local --file=./seed.sql",
+    "db:reset": "rm -rf .wrangler/state/v3/d1 && npm run db:migrate:local && npm run db:seed",
+    "db:console:local": "wrangler d1 execute webapp-production --local",
+    "db:console:prod": "wrangler d1 execute webapp-production",
+    "clean-port": "fuser -k 3000/tcp 2>/dev/null || true"
+  },
+  "dependencies": {
+    "@fal-ai/client": "^1.6.2",
+    "archiver": "^7.0.1",
+    "axios": "^1.12.2",
+    "cloudinary": "^2.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "form-data": "^4.0.4",
+    "hono": "^4.9.8",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^24.24.1"
+  },
+  "devDependencies": {
+    "@hono/vite-build": "^1.2.0",
+    "@hono/vite-dev-server": "^0.18.2",
+    "better-sqlite3": "^12.4.1",
+    "concurrently": "^9.2.1",
+    "vite": "^6.3.5",
+    "wrangler": "^4.4.0"
+  }
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https: blob:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https:; frame-ancestors 'none'">
+  <title>Content Creator</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <!-- Health Check Banner -->
+  <div id="health-check-banner" style="display: none;" class="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-exclamation-triangle text-xl"></i>
+        <div>
+          <strong>⚠️ Wrong Dev Server Detected</strong>
+          <p class="text-sm mt-1" id="health-check-message">
+            You're accessing the Vite server (port 5173) which doesn't have D1 database bindings. 
+            API calls will fail. Please use <strong>http://localhost:3000</strong> instead.
+          </p>
+        </div>
+      </div>
+      <button onclick="document.getElementById('health-check-banner').style.display='none'" 
+              class="px-4 py-2 bg-red-700 hover:bg-red-800 rounded transition-colors">
+        <i class="fas fa-times"></i> Dismiss
+      </button>
+    </div>
+  </div>
+  
+  <div id="app"></div>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+  <script src="/static/app.js"></script>
+  
+  <script>
+    // Health check on page load
+    (function() {
+      const banner = document.getElementById('health-check-banner');
+      const message = document.getElementById('health-check-message');
+      const currentPort = window.location.port;
+      const isWrongPort = currentPort === '5173' || currentPort === '';
+      
+      // Check if API is working
+      async function checkAPIHealth() {
+        try {
+          const response = await axios.get('/api/gallery/stats', { timeout: 2000 });
+          // API is working, hide banner if it was shown
+          if (banner) banner.style.display = 'none';
+          return true;
+        } catch (error) {
+          // API failed - show banner
+          if (banner) {
+            if (isWrongPort) {
+              message.innerHTML = `
+                You're accessing the Vite server (port ${currentPort || '5173'}) which doesn't have D1 database bindings. 
+                API calls will fail. Please use <strong>http://localhost:3000</strong> instead.
+              `;
+            } else {
+              message.innerHTML = `
+                API health check failed. The server may not be running correctly or D1 bindings are missing.
+                Error: ${error.message}
+              `;
+            }
+            banner.style.display = 'block';
+          }
+          return false;
+        }
+      }
+      
+      // Wait for axios to load, then check
+      if (typeof axios !== 'undefined') {
+        setTimeout(checkAPIHealth, 500);
+      } else {
+        window.addEventListener('load', () => {
+          setTimeout(checkAPIHealth, 500);
+        });
+      }
+      
+      // Also check port immediately
+      if (isWrongPort && banner) {
+        banner.style.display = 'block';
+      }
+    })();
+  </script>
+</body>
+</html>
